@@ -18,6 +18,7 @@ public class AddEditIngredientActivity extends AppCompatActivity {
     private EditText nameEditText;
     private EditText quantityEditText;
     private Spinner unitSpinner;
+    private ArrayAdapter<CharSequence> unitAdapter;
     private EditText expiryDateEditText;
     private long pantryItemId = -1;
 
@@ -40,7 +41,7 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         quantityEditText = findViewById(R.id.quantityEditText);
         unitSpinner = findViewById(R.id.unitSpinner);
         expiryDateEditText = findViewById(R.id.expiryDateEditText);
-        ArrayAdapter<CharSequence> unitAdapter = ArrayAdapter.createFromResource(
+        unitAdapter = ArrayAdapter.createFromResource(
                 this, R.array.ingredient_units, android.R.layout.simple_spinner_item);
         unitAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         unitSpinner.setAdapter(unitAdapter);
@@ -61,7 +62,6 @@ public class AddEditIngredientActivity extends AppCompatActivity {
     }
 
     private void selectUnit(String unit) {
-        ArrayAdapter<?> unitAdapter = (ArrayAdapter<?>) unitSpinner.getAdapter();
         int unitPosition = unitAdapter.getPosition(unit);
         unitSpinner.setSelection(Math.max(unitPosition, 0));
     }
