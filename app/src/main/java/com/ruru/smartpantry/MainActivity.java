@@ -2,6 +2,8 @@ package com.ruru.smartpantry;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -51,6 +53,14 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void openSuggestedRecipesScreen() {
+        startActivity(new Intent(this, SuggestedRecipesActivity.class));
+    }
+
+    private void openSettingsScreen() {
+        startActivity(new Intent(this, SettingsActivity.class));
+    }
+
     private void showDeleteConfirmation(PantryItem pantryItem) {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.delete_ingredient_title)
@@ -71,6 +81,27 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         refreshPantryList();
+    }
+
+    /** Adds the main navigation choices to the toolbar. */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    /** Opens the screen selected from the toolbar menu. */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menuSuggestedRecipes) {
+            openSuggestedRecipesScreen();
+            return true;
+        }
+        if (item.getItemId() == R.id.menuSettings) {
+            openSettingsScreen();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

@@ -122,6 +122,34 @@ public class PantryDatabaseHelper extends SQLiteOpenHelper {
         return null;
     }
 
+    /** Returns whether expiry alerts are enabled. */
+    public boolean areExpiryAlertsEnabled() {
+        try (Cursor cursor = getReadableDatabase().query(
+                "settings", new String[]{"expiring_alerts"}, "id = 1",
+                null, null, null, null)) {
+            return cursor.moveToFirst() && cursor.getInt(0) == 1;
+        }
+    }
+
+    /** Returns the saved preferred unit system. */
+    public String getPreferredUnitSystem() {
+        try (Cursor cursor = getReadableDatabase().query(
+                "settings", new String[]{"preferred_unit"}, "id = 1",
+                null, null, null, null)) {
+            return cursor.moveToFirst() ? cursor.getString(0) : "Metric";
+        }
+    }
+
+    /** Saves the user's settings. */
+    public boolean updateSettings(boolean expiryAlertsEnabled, String preferredUnitSystem) {
+        ContentValues values = new ContentValues();
+        values.put("expiring_alerts", expiryAlertsEnabled ? 1 : 0);
+        values.put("preferred_unit", preferredUnitSystem);
+        int updatedRows = getWritableDatabase().update(
+                "settings", values, "id = 1", null);
+        return updatedRows == 1;
+    }
+
     private void addIngredientsToRecipes(Map<Long, Recipe> recipesById) {
         try (Cursor cursor = getReadableDatabase().query(
                 RECIPE_INGREDIENT_TABLE, null, null, null, null, null, "id")) {

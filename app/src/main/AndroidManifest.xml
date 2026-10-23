@@ -13,6 +13,9 @@
         android:theme="@style/Theme.RuruPantryManager">
 
         <activity
+            android:name=".SettingsActivity"
+            android:exported="false" />
+        <activity
             android:name=".RecipeDetailActivity"
             android:exported="false" />
         <activity
