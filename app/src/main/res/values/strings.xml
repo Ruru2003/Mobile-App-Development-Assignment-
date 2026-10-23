@@ -19,6 +19,8 @@
     <string name="delete_ingredient_message">Remove %1$s from your pantry?</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
+    <string name="suggested_recipes_title">Suggested Recipes</string>
+    <string name="no_suggested_recipes">No recipes match your pantry yet. Add more ingredients and try again.</string>
 
     <string-array name="ingredient_units">
         <item>each</item>

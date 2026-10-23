@@ -7,7 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /** Creates and manages the local Smart Pantry SQLite database. */
 public class PantryDatabaseHelper extends SQLiteOpenHelper {
@@ -94,6 +96,47 @@ public class PantryDatabaseHelper extends SQLiteOpenHelper {
         int deletedRows = getWritableDatabase().delete(
                 PANTRY_TABLE, "id = ?", selectionArguments);
         return deletedRows == 1;
+    }
+
+    /** Returns all saved recipes and their required ingredients. */
+    public List<Recipe> getAllRecipes() {
+        Map<Long, Recipe> recipesById = new LinkedHashMap<>();
+        try (Cursor cursor = getReadableDatabase().query(
+                RECIPE_TABLE, null, null, null, null, null, "name COLLATE NOCASE")) {
+            while (cursor.moveToNext()) {
+                Recipe recipe = readRecipe(cursor);
+                recipesById.put(recipe.getId(), recipe);
+            }
+        }
+        addIngredientsToRecipes(recipesById);
+        return new ArrayList<>(recipesById.values());
+    }
+
+    private void addIngredientsToRecipes(Map<Long, Recipe> recipesById) {
+        try (Cursor cursor = getReadableDatabase().query(
+                RECIPE_INGREDIENT_TABLE, null, null, null, null, null, "id")) {
+            while (cursor.moveToNext()) {
+                long recipeId = cursor.getLong(cursor.getColumnIndexOrThrow("recipe_id"));
+                Recipe recipe = recipesById.get(recipeId);
+                if (recipe != null) {
+                    recipe.addIngredient(readRecipeIngredient(cursor));
+                }
+            }
+        }
+    }
+
+    private Recipe readRecipe(Cursor cursor) {
+        return new Recipe(
+                cursor.getLong(cursor.getColumnIndexOrThrow("id")),
+                cursor.getString(cursor.getColumnIndexOrThrow("name")),
+                cursor.getString(cursor.getColumnIndexOrThrow("instructions")));
+    }
+
+    private RecipeIngredient readRecipeIngredient(Cursor cursor) {
+        return new RecipeIngredient(
+                cursor.getString(cursor.getColumnIndexOrThrow("name")),
+                cursor.getDouble(cursor.getColumnIndexOrThrow("quantity")),
+                cursor.getString(cursor.getColumnIndexOrThrow("unit")));
     }
 
     private ContentValues createPantryValues(String name, double quantity,
