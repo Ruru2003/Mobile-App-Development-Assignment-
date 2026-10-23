@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Ruru Pantry Manager</string>
+    <string name="pantry_title">My Pantry</string>
+    <string name="empty_pantry_message">Your pantry is empty.</string>
 </resources>
