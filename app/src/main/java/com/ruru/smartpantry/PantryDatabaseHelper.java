@@ -112,6 +112,16 @@ public class PantryDatabaseHelper extends SQLiteOpenHelper {
         return new ArrayList<>(recipesById.values());
     }
 
+    /** Returns one recipe, or null when it does not exist. */
+    public Recipe getRecipe(long recipeId) {
+        for (Recipe recipe : getAllRecipes()) {
+            if (recipe.getId() == recipeId) {
+                return recipe;
+            }
+        }
+        return null;
+    }
+
     private void addIngredientsToRecipes(Map<Long, Recipe> recipesById) {
         try (Cursor cursor = getReadableDatabase().query(
                 RECIPE_INGREDIENT_TABLE, null, null, null, null, null, "id")) {

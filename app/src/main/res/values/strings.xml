@@ -21,6 +21,9 @@
     <string name="cancel">Cancel</string>
     <string name="suggested_recipes_title">Suggested Recipes</string>
     <string name="no_suggested_recipes">No recipes match your pantry yet. Add more ingredients and try again.</string>
+    <string name="ingredients_heading">Ingredients</string>
+    <string name="instructions_heading">Instructions</string>
+    <string name="recipe_not_found">Recipe not found</string>
 
     <string-array name="ingredient_units">
         <item>each</item>

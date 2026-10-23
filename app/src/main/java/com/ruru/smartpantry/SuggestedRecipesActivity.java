@@ -1,5 +1,6 @@
 package com.ruru.smartpantry;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -15,6 +16,7 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
 
     private PantryDatabaseHelper databaseHelper;
     private final List<String> recipeNames = new ArrayList<>();
+    private final List<Recipe> suggestedRecipes = new ArrayList<>();
     private ArrayAdapter<String> recipeAdapter;
 
     @Override
@@ -34,17 +36,27 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
                 this, android.R.layout.simple_list_item_1, recipeNames);
         recipeListView.setAdapter(recipeAdapter);
         recipeListView.setEmptyView(emptyRecipesTextView);
+        recipeListView.setOnItemClickListener((parent, view, position, id) ->
+                openRecipeDetails(suggestedRecipes.get(position)));
     }
 
     private void loadSuggestedRecipes() {
         RecipeMatcher recipeMatcher = new RecipeMatcher();
-        List<Recipe> recipes = recipeMatcher.findMakeableRecipes(
+        List<Recipe> matchingRecipes = recipeMatcher.findMakeableRecipes(
                 databaseHelper.getAllRecipes(), databaseHelper.getAllPantryItems());
+        suggestedRecipes.clear();
+        suggestedRecipes.addAll(matchingRecipes);
         recipeNames.clear();
-        for (Recipe recipe : recipes) {
+        for (Recipe recipe : suggestedRecipes) {
             recipeNames.add(recipe.getName());
         }
         recipeAdapter.notifyDataSetChanged();
+    }
+
+    private void openRecipeDetails(Recipe recipe) {
+        Intent intent = new Intent(this, RecipeDetailActivity.class);
+        intent.putExtra(RecipeDetailActivity.EXTRA_RECIPE_ID, recipe.getId());
+        startActivity(intent);
     }
 
     @Override
