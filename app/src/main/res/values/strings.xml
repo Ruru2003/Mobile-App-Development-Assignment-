@@ -14,6 +14,11 @@
     <string name="name_required">Ingredient name is required</string>
     <string name="quantity_required">Enter a valid quantity</string>
     <string name="quantity_positive">Quantity must be greater than zero</string>
+    <string name="quantity_and_unit">%1$s %2$s</string>
+    <string name="delete_ingredient_title">Delete ingredient?</string>
+    <string name="delete_ingredient_message">Remove %1$s from your pantry?</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
 
     <string-array name="ingredient_units">
         <item>each</item>

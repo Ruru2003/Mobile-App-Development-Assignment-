@@ -2,6 +2,10 @@ package com.ruru.smartpantry;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MainActivity extends AppCompatActivity {
 
     private PantryDatabaseHelper databaseHelper;
+    private PantryAdapter pantryAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,13 +21,56 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         databaseHelper = new PantryDatabaseHelper(this);
         databaseHelper.getWritableDatabase();
+        setupPantryList();
         findViewById(R.id.addIngredientButton).setOnClickListener(
                 view -> openAddIngredientScreen());
+    }
+
+    private void setupPantryList() {
+        ListView pantryListView = findViewById(R.id.pantryListView);
+        TextView emptyPantryTextView = findViewById(R.id.emptyPantryTextView);
+        pantryAdapter = new PantryAdapter(this);
+        pantryListView.setAdapter(pantryAdapter);
+        pantryListView.setEmptyView(emptyPantryTextView);
+        pantryListView.setOnItemClickListener((parent, view, position, id) ->
+                openEditIngredientScreen(pantryAdapter.getItem(position)));
+        pantryListView.setOnItemLongClickListener((parent, view, position, id) -> {
+            showDeleteConfirmation(pantryAdapter.getItem(position));
+            return true;
+        });
     }
 
     private void openAddIngredientScreen() {
         Intent intent = new Intent(this, AddEditIngredientActivity.class);
         startActivity(intent);
+    }
+
+    private void openEditIngredientScreen(PantryItem pantryItem) {
+        Intent intent = new Intent(this, AddEditIngredientActivity.class);
+        intent.putExtra(AddEditIngredientActivity.EXTRA_PANTRY_ITEM_ID, pantryItem.getId());
+        startActivity(intent);
+    }
+
+    private void showDeleteConfirmation(PantryItem pantryItem) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.delete_ingredient_title)
+                .setMessage(getString(R.string.delete_ingredient_message, pantryItem.getName()))
+                .setPositiveButton(R.string.delete, (dialog, which) -> {
+                    databaseHelper.deletePantryItem(pantryItem.getId());
+                    refreshPantryList();
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
+
+    private void refreshPantryList() {
+        pantryAdapter.replaceItems(databaseHelper.getAllPantryItems());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshPantryList();
     }
 
     @Override
