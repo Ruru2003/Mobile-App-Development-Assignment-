@@ -74,7 +74,9 @@ public class RecipeMatcherTest {
 
     private Recipe createRecipe(String name, RecipeIngredient... ingredients) {
         Recipe recipe = new Recipe(1, name, "Test instructions");
-        Arrays.stream(ingredients).forEach(recipe::addIngredient);
+        for (RecipeIngredient ingredient : ingredients) {
+            recipe.addIngredient(ingredient);
+        }
         return recipe;
     }
 

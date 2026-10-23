@@ -7,9 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /** Creates and manages the local Smart Pantry SQLite database. */
 public class PantryDatabaseHelper extends SQLiteOpenHelper {
@@ -76,7 +74,10 @@ public class PantryDatabaseHelper extends SQLiteOpenHelper {
         String[] selectionArguments = {String.valueOf(pantryItemId)};
         try (Cursor cursor = getReadableDatabase().query(
                 PANTRY_TABLE, null, selection, selectionArguments, null, null, null)) {
-            return cursor.moveToFirst() ? readPantryItem(cursor) : null;
+            if (cursor.moveToFirst()) {
+                return readPantryItem(cursor);
+            }
+            return null;
         }
     }
 
@@ -100,16 +101,15 @@ public class PantryDatabaseHelper extends SQLiteOpenHelper {
 
     /** Returns all saved recipes and their required ingredients. */
     public List<Recipe> getAllRecipes() {
-        Map<Long, Recipe> recipesById = new LinkedHashMap<>();
+        List<Recipe> recipes = new ArrayList<>();
         try (Cursor cursor = getReadableDatabase().query(
                 RECIPE_TABLE, null, null, null, null, null, "name COLLATE NOCASE")) {
             while (cursor.moveToNext()) {
-                Recipe recipe = readRecipe(cursor);
-                recipesById.put(recipe.getId(), recipe);
+                recipes.add(readRecipe(cursor));
             }
         }
-        addIngredientsToRecipes(recipesById);
-        return new ArrayList<>(recipesById.values());
+        addIngredientsToRecipes(recipes);
+        return recipes;
     }
 
     /** Returns one recipe, or null when it does not exist. */
@@ -136,31 +136,47 @@ public class PantryDatabaseHelper extends SQLiteOpenHelper {
         try (Cursor cursor = getReadableDatabase().query(
                 "settings", new String[]{"preferred_unit"}, "id = 1",
                 null, null, null, null)) {
-            return cursor.moveToFirst() ? cursor.getString(0) : "Metric";
+            if (cursor.moveToFirst()) {
+                return cursor.getString(0);
+            }
+            return "Metric";
         }
     }
 
     /** Saves the user's settings. */
     public boolean updateSettings(boolean expiryAlertsEnabled, String preferredUnitSystem) {
         ContentValues values = new ContentValues();
-        values.put("expiring_alerts", expiryAlertsEnabled ? 1 : 0);
+        int expiryAlertsValue = 0;
+        if (expiryAlertsEnabled) {
+            expiryAlertsValue = 1;
+        }
+        values.put("expiring_alerts", expiryAlertsValue);
         values.put("preferred_unit", preferredUnitSystem);
         int updatedRows = getWritableDatabase().update(
                 "settings", values, "id = 1", null);
         return updatedRows == 1;
     }
 
-    private void addIngredientsToRecipes(Map<Long, Recipe> recipesById) {
+    private void addIngredientsToRecipes(List<Recipe> recipes) {
         try (Cursor cursor = getReadableDatabase().query(
                 RECIPE_INGREDIENT_TABLE, null, null, null, null, null, "id")) {
             while (cursor.moveToNext()) {
                 long recipeId = cursor.getLong(cursor.getColumnIndexOrThrow("recipe_id"));
-                Recipe recipe = recipesById.get(recipeId);
+                Recipe recipe = findRecipeById(recipes, recipeId);
                 if (recipe != null) {
                     recipe.addIngredient(readRecipeIngredient(cursor));
                 }
             }
         }
+    }
+
+    private Recipe findRecipeById(List<Recipe> recipes, long recipeId) {
+        for (Recipe recipe : recipes) {
+            if (recipe.getId() == recipeId) {
+                return recipe;
+            }
+        }
+        return null;
     }
 
     private Recipe readRecipe(Cursor cursor) {

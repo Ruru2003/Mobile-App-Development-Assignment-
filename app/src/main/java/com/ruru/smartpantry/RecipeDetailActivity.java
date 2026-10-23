@@ -43,13 +43,14 @@ public class RecipeDetailActivity extends AppCompatActivity {
         quantityFormat.setMaximumFractionDigits(2);
         StringBuilder ingredientsText = new StringBuilder();
         for (RecipeIngredient ingredient : recipe.getIngredients()) {
-            ingredientsText.append("• ")
-                    .append(ingredient.getName())
-                    .append(": ")
-                    .append(quantityFormat.format(ingredient.getQuantity()))
-                    .append(" ")
-                    .append(ingredient.getUnit())
-                    .append("\n");
+            String quantity = quantityFormat.format(ingredient.getQuantity());
+            ingredientsText.append("• ");
+            ingredientsText.append(ingredient.getName());
+            ingredientsText.append(": ");
+            ingredientsText.append(quantity);
+            ingredientsText.append(" ");
+            ingredientsText.append(ingredient.getUnit());
+            ingredientsText.append("\n");
         }
         return ingredientsText.toString().trim();
     }

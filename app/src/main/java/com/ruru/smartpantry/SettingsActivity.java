@@ -42,7 +42,10 @@ public class SettingsActivity extends AppCompatActivity {
     private void loadSettings() {
         expiryAlertsSwitch.setChecked(databaseHelper.areExpiryAlertsEnabled());
         String preferredUnitSystem = databaseHelper.getPreferredUnitSystem();
-        int position = preferredUnitSystem.equals("Imperial") ? 1 : 0;
+        int position = 0;
+        if (preferredUnitSystem.equals("Imperial")) {
+            position = 1;
+        }
         unitSystemSpinner.setSelection(position);
     }
 
