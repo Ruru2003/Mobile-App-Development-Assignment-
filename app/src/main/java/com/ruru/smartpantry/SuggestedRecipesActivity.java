@@ -65,6 +65,7 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
         loadSuggestedRecipes();
     }
 
+    /** Closes the recipe list when the toolbar back button is pressed. */
     @Override
     public boolean onSupportNavigateUp() {
         finish();

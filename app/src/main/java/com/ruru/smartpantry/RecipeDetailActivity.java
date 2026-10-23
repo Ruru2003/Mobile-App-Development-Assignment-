@@ -54,6 +54,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         return ingredientsText.toString().trim();
     }
 
+    /** Closes the recipe details when the toolbar back button is pressed. */
     @Override
     public boolean onSupportNavigateUp() {
         finish();

@@ -61,10 +61,19 @@ public class PantryAdapter extends BaseAdapter {
         PantryItem pantryItem = getItem(position);
         TextView nameTextView = itemView.findViewById(R.id.ingredientNameTextView);
         TextView quantityTextView = itemView.findViewById(R.id.ingredientQuantityTextView);
+        TextView expiryTextView = itemView.findViewById(R.id.ingredientExpiryTextView);
         nameTextView.setText(pantryItem.getName());
         String quantity = quantityFormat.format(pantryItem.getQuantity());
         quantityTextView.setText(itemView.getContext().getString(
                 R.string.quantity_and_unit, quantity, pantryItem.getUnit()));
+        String expiryDate = pantryItem.getExpiryDate();
+        if (expiryDate == null || expiryDate.isEmpty()) {
+            expiryTextView.setVisibility(View.GONE);
+        } else {
+            expiryTextView.setVisibility(View.VISIBLE);
+            expiryTextView.setText(itemView.getContext().getString(
+                    R.string.expiry_date_value, expiryDate));
+        }
         return itemView;
     }
 }
