@@ -13,6 +13,9 @@
         android:theme="@style/Theme.RuruPantryManager">
 
         <activity
+            android:name=".AddEditIngredientActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

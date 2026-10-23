@@ -2,4 +2,26 @@
     <string name="app_name">Ruru Pantry Manager</string>
     <string name="pantry_title">My Pantry</string>
     <string name="empty_pantry_message">Your pantry is empty.</string>
+    <string name="add_ingredient">Add Ingredient</string>
+    <string name="edit_ingredient_title">Edit Ingredient</string>
+    <string name="ingredient_name_hint">Ingredient name</string>
+    <string name="quantity_hint">Quantity</string>
+    <string name="unit_label">Unit</string>
+    <string name="expiry_date_hint">Expiry date (optional)</string>
+    <string name="save_ingredient">Save Ingredient</string>
+    <string name="ingredient_saved">Ingredient saved</string>
+    <string name="ingredient_not_found">Ingredient not found</string>
+    <string name="name_required">Ingredient name is required</string>
+    <string name="quantity_required">Enter a valid quantity</string>
+    <string name="quantity_positive">Quantity must be greater than zero</string>
+
+    <string-array name="ingredient_units">
+        <item>each</item>
+        <item>g</item>
+        <item>kg</item>
+        <item>ml</item>
+        <item>l</item>
+        <item>slice</item>
+        <item>tbsp</item>
+    </string-array>
 </resources>
